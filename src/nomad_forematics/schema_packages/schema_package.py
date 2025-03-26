@@ -34,5 +34,4 @@ class NewSchemaPackage(Schema):
         logger.info('NewSchema.normalize', parameter=configuration.parameter)
         self.message = f'Hello {self.name}!'
 
-
 m_package.__init_metainfo__()
