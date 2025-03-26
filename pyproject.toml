@@ -63,7 +63,7 @@ exclude = [
 ]
 
 # Same as Black.
-line-length = 88
+line-length = 88 #88 was the default value
 indent-width = 4
 
 
@@ -77,7 +77,7 @@ select = [
     "UP",
     # isort
     "I",
-    # pylint 
+    # pylint
     "PL",
 ]
 
