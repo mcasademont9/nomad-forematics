@@ -117,5 +117,6 @@ normalizer_entry_point = "nomad_forematics.normalizers:normalizer_entry_point"
 app_entry_point = "nomad_forematics.apps:app_entry_point"
 example_upload_entry_point = "nomad_forematics.example_uploads:example_upload_entry_point"
 [tool.cruft]
+substrate = "nomad_forematics.schema_packages:substrate"
 # Avoid updating workflow files, this leads to permissions issues
 skip = [".github/*"]
