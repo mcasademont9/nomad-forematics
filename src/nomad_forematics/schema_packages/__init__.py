@@ -1,5 +1,4 @@
 from nomad.config.models.plugins import SchemaPackageEntryPoint
-from pydantic import Field
 
 
 class NewSchemaPackageEntryPoint(SchemaPackageEntryPoint):
@@ -14,4 +13,15 @@ class NewSchemaPackageEntryPoint(SchemaPackageEntryPoint):
 schema_package_entry_point = NewSchemaPackageEntryPoint(
     name='NewSchemaPackage',
     description='New schema package entry point configuration.',
+)
+
+class SubstrateEntryPoint(SchemaPackageEntryPoint)
+    def load(self):
+        from nomad_forematics.schema_packages.substrate import m_package
+
+        return m_package
+        
+substrate = SubstrateEntryPoint(
+    name='Substrate',
+    description='Schema package defined for substrate.',
 )
