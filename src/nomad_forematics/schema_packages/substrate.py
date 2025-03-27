@@ -25,14 +25,10 @@ from nomad.datamodel.metainfo.basesections import (
     Collection,
     CompositeSystemReference,
     ProcessStep,
-    PubChemPureSubstanceSection,
-    PureSubstanceComponent,
     ReadableIdentifiers,
 )
-from nomad.metainfo import MEnum, MProxy, Package, Quantity, Section, SubSection
+from nomad.metainfo import MEnum, MProxy, Package, Quantity, Section, SubSection, MSection
 from nomad_material_processing.general import (
-    Dopant,
-    ElectronicProperties,
     RectangleCuboid,
     Substrate,
 )
@@ -45,10 +41,10 @@ if TYPE_CHECKING:
     from nomad.datamodel.datamodel import EntryArchive
     from structlog.stdlib import BoundLogger
 
-m_package = Package(name='DTU customised Substrate scheme')
+m_package = Package(name='Forematics customised Substrate schema')
 
 
-class ForematicsSubstrate(Substrate, Schema):
+class ForematicsSubstrate(Substrate, Schema): # it was (Substrate, Schema) before
     """
     Schema for substrates in the Forematics lab.
     """
@@ -249,25 +245,15 @@ class ForematicsSubstrateBatch(Collection, Schema):
             geometry.height = self.thickness
             substrate.geometry = geometry
 
-            component = PureSubstanceComponent()
-            substance_section = PubChemPureSubstanceSection()
-            substance_section.molecular_formula = self.material
-            substance_section.normalize(archive, logger)
+            # component = PureSubstanceComponent()
+            # substance_section = PubChemPureSubstanceSection()
+            # substance_section.molecular_formula = self.material
+            # substance_section.normalize(archive, logger)
 
-            component.pure_substance = substance_section
-            substrate.components = [component]
-
-            substrate.dopants = [
-                Dopant(element=element) for element in self.doping_elements
-            ]
-
-            electronic_properties = ElectronicProperties()
-            electronic_properties.conductivity_type = self.doping_type_of_substrate
-            electronic_properties.electrical_resistivity = self.doping_of_substrate
-            substrate.electronic_properties = electronic_properties
+            # component.pure_substance = substance_section
+            # substrate.components = [component]
 
             substrate.supplier = self.supplier
-            substrate.substrate_polishing = self.substrate_polishing
 
             substrate.normalize(archive, logger)
 
