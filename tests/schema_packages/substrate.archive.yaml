@@ -1,0 +1,44 @@
+# data:
+#   m_def: nomad_forematics.schema_packages.substrate.ForOPVSubstrateCleaning
+#   name: CleanProcess
+#   procedure: 'Standard'
+
+
+data:
+  m_def: nomad_forematics.schema_packages.solution.ForOPVSolution
+  name: SolutionTest
+  calculate_solution: True
+  total_volume: 50
+  solute_concentration: 15
+  solvents:
+    - m_def: nomad_forematics.schema_packages.solution.SolventComponent
+      name: PTQ10
+      solvent_ratio: 0.5
+    - m_def: nomad_forematics.schema_packages.solution.SolventComponent
+      name: PTB7-Th
+      solvent_ratio: 0.5
+  donors:
+    - m_def: nomad_forematics.schema_packages.solution.OrgSCComponent
+      name: PM6
+      organic_semiconductor_ratio: 0.5
+    - m_def: nomad_forematics.schema_packages.solution.OrgSCComponent
+      name: PM6
+      organic_semiconductor_ratio: 0.5
+  acceptors:
+    - m_def: nomad_forematics.schema_packages.solution.OrgSCComponent
+      name: Y6
+      organic_semiconductor_ratio: 2
+    - m_def: nomad_forematics.schema_packages.solution.OrgSCComponent
+      name: COTIC-4F
+      organic_semiconductor_ratio: 0.5
+  additives:
+    - m_def: nomad_forematics.schema_packages.solution.AdditiveComponent
+      name: DIO
+      solid_concentration: 0.2
+    - m_def: nomad_forematics.schema_packages.solution.AdditiveComponent
+      name: CN
+      liquid_concentration: 0.1
+
+
+
+

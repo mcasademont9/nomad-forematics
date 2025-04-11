@@ -25,6 +25,7 @@ from nomad.datamodel.metainfo.basesections import (
     Collection,
     CompositeSystemReference,
     ProcessStep,
+    Process,
     ReadableIdentifiers,
 )
 from nomad.metainfo import MEnum, MProxy, Package, Quantity, Section, SubSection, MSection
@@ -44,32 +45,38 @@ if TYPE_CHECKING:
 m_package = Package(name='Forematics customised Substrate schema')
 
 
-class ForematicsSubstrate(Substrate, Schema): # it was (Substrate, Schema) before
+class ForOPVSubstrate(Substrate, Schema):
     """
-    Schema for substrates in the Forematics lab.
+    Schema for one sollar cell substrate in the Forematics lab.
     """
 
     m_def = Section(
         categories=[ForematicsCategory],
-        label='Substrate',
+        label='ForematicsSubstrate',
     )
 
-    substrate_coverage_pattern = Quantity(
-        type = MEnum(['Patterned', 'Full','None']),
-        default = 'Full',
+    # substrate_coverage_pattern = Quantity(
+    #     type = MEnum(['Patterned', 'Full','None']),
+    #     default = 'Full',
+    #     a_eln={'component': 'RadioEnumEditQuantity'},
+    # )
+
+    # substrate_coverage_material = Quantity(
+    #     type = MEnum(['ITO', 'FTO', 'None']),
+    #     default = 'ITO',
+    #     a_eln={'component': 'RadioEnumEditQuantity'},
+    # )
+
+    size = Quantity(
+        type = MEnum(['Scale-up', 'Spin-coating']),
+        default = 'Spin-coating',
         a_eln={'component': 'RadioEnumEditQuantity'},
     )
 
-    substrate_coverage_material = Quantity(
-        type = MEnum(['ITO', 'FTO', 'None']),
-        default = 'ITO',
-        a_eln={'component': 'RadioEnumEditQuantity'},
-    )
-
-    substrate_size = Quantity(
-        type = MEnum(['Scale-up', 'Spin-coating', 'Glass slide']),
-        default = 'Scale-up',
-        a_eln={'component': 'RadioEnumEditQuantity'},
+    supplyer = Quantity(
+        type=str,
+        default ='Ossila',
+        a_eln={'component': 'StringEditQuantity'}
     )
 
     length = Quantity(
@@ -85,7 +92,7 @@ class ForematicsSubstrate(Substrate, Schema): # it was (Substrate, Schema) befor
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'mm'},
         unit='m',
     )
-    thickness = Quantity(
+    depth = Quantity(
         type=np.float64,
         default=0.0011,
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'mm'},
@@ -94,7 +101,7 @@ class ForematicsSubstrate(Substrate, Schema): # it was (Substrate, Schema) befor
 
     def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
         """
-        The normalizer for the `DTUSubstrateBatch` class.
+        The normalizer for the `ForematicsSubstrate` class.
 
         Args:
             archive (EntryArchive): The archive containing the section that is being
@@ -103,33 +110,25 @@ class ForematicsSubstrate(Substrate, Schema): # it was (Substrate, Schema) befor
         """
         super().normalize(archive, logger)
 
-        # define that there is no material coverage in case there is no coverage pattern
-        if self.substrate_coverage_pattern == 'None':
-            self.substrate_coverage_material = 'None'
-
         # Define the sizes of the possible pre-defined substrates
-        if self.substrate_size == 'Scale-up':
+        if self.size == 'Scale-up':
             self.width = 0.025
             self.length = 0.075
-            self.thickness = 0.0011
-        elif self.substrate_size == 'Spin-coating':
+            self.depth = 0.0011
+        elif self.size == 'Spin-coating':
             self.width = 0.010
             self.length = 0.020
-            self.thickness = 0.0011
-        elif self.substrate_size == 'Glass slide':
-            self.width = 0.026
-            self.length = 0.076
-            self.thickness = 0.0011
+            self.depth = 0.0011
 
-class ForematicsSubstrateReference(CompositeSystemReference):
+class ForOPVSubstrateReference(CompositeSystemReference):
     reference = Quantity(
-        type=ForematicsSubstrate,
-        description='The reference to the substrate entity.',
+        type=ForOPVSubstrate,
+        description='The reference to a ForOPVSubstrate entity.',
         a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
     )
 
 
-class ForematicsSubstrateBatch(Collection, Schema):
+class ForOPVSubstrateBatch(Collection, Schema):
     """
     Schema for substrate batches in the Forematics lab.
     """
@@ -141,67 +140,60 @@ class ForematicsSubstrateBatch(Collection, Schema):
             substrate_identifiers=dict(),
         ),
     )
+
     entities = SubSection(
-        section_def=ForematicsSubstrateReference,
+        section_def=ForOPVSubstrateReference,
         description='References to the entities of the collection of substrates.',
         repeats=True,
     )
-    material = Quantity(
-        type=str,
-        default='Glass',
-        description='The material of the substrate.',
-        a_eln=ELNAnnotation(component=ELNComponentEnum.StringEditQuantity),
-    )
+
     supplier = Quantity(
         type=str,
         default='Ossila',
         a_eln={'component': 'StringEditQuantity'},
     )
-    length = Quantity(
-        type=np.float64,
-        default=0.04,
-        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'mm'},
-        unit='m',
+
+    size = Quantity(
+        type = MEnum(['Scale-up', 'Spin-coating']),
+        default = 'Spin-coating',
+        a_eln={'component': 'RadioEnumEditQuantity'},
     )
-    width = Quantity(
-        type=np.float64,
-        default=0.04,
-        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'mm'},
-        unit='m',
-    )
-    thickness = Quantity(
-        type=np.float64,
-        default=0.000675,
-        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'mm'},
-        unit='m',
-    )
+
     create_substrates = Quantity(
         type=bool,
         description='Whether to (re)create the substrate entities.',
         a_eln=ELNAnnotation(component=ELNComponentEnum.BoolEditQuantity),
     )
+
     number_of_substrates = Quantity(
         type=int,
         description='The number of substrates in the batch.',
         a_eln=ELNAnnotation(component=ELNComponentEnum.NumberEditQuantity),
     )
+
     substrate_identifiers = SubSection(
         section_def=ReadableIdentifiers,
     )
 
+    lab_id = Quantity(
+        type=str,
+        default = 'NanoptoLab',
+        a_eln={'component': 'StringEditQuantity'}
+    )
+
     def next_used_in(
         self, entry_type: type[Schema], negate: bool = False
-    ) -> ForematicsSubstrate:
+    ) -> ForOPVSubstrate:
         from nomad.search import (
             MetadataPagination,
             search,
         )
 
-        ref: ForematicsSubstrateReference
+        ref: ForOPVSubstrateReference
         for ref in self.entities:
             if isinstance(ref.reference, MProxy):
                 ref.reference.m_proxy_resolve()
-            if not isinstance(ref.reference, ForematicsSubstrate):
+            if not isinstance(ref.reference, ForOPVSubstrate):
                 continue
             substrate = ref.reference
             query = {
@@ -222,12 +214,12 @@ class ForematicsSubstrateBatch(Collection, Schema):
                 return substrate
         return None
 
-    def next_not_used_in(self, entry_type: type[Schema]) -> ForematicsSubstrate:
+    def next_not_used_in(self, entry_type: type[Schema]) -> ForOPVSubstrate:
         return self.next_used_in(entry_type, negate=True)
 
     def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
         """
-        The normalizer for the `ForematicsSubstrateBatch` class.
+        The normalizer for the `ForOPVSubstrateBatch` class.
 
         Args:
             archive (EntryArchive): The archive containing the section that is being
@@ -236,35 +228,25 @@ class ForematicsSubstrateBatch(Collection, Schema):
         """
         super().normalize(archive, logger)
         if self.create_substrates:
+
             self.entities = []
-            substrate = ForematicsSubstrate()
 
-            geometry = RectangleCuboid()
-            geometry.length = self.length
-            geometry.width = self.width
-            geometry.height = self.thickness
-            substrate.geometry = geometry
-
-            # component = PureSubstanceComponent()
-            # substance_section = PubChemPureSubstanceSection()
-            # substance_section.molecular_formula = self.material
-            # substance_section.normalize(archive, logger)
-
-            # component.pure_substance = substance_section
-            # substrate.components = [component]
+            substrate = ForOPVSubstrate()
 
             substrate.supplier = self.supplier
-
+            substrate.size = self.size
             substrate.normalize(archive, logger)
 
             for i in range(self.number_of_substrates):
                 substrate.name = f'{self.name} {i}' #Definition of substrates names
                 substrate.datetime = self.datetime
                 substrate.lab_id = f'{self.lab_id}-{i}'
-                file_name = f'{substrate.lab_id}.archive.json'
+                file_name = f'{substrate.name}.archive.json'
                 substrate_archive = create_archive(substrate, archive, file_name)
-                self.entities.append(
-                    CompositeSystemReference(
+
+                self.entities.append( # Check if that is correct aftwerwards with the implementation in oasis environment
+                    # CompositeSystemReference(
+                    ForOPVSubstrateReference(
                         reference=substrate_archive,
                         name=substrate.name,
                         lab_id=substrate.lab_id,
@@ -272,7 +254,7 @@ class ForematicsSubstrateBatch(Collection, Schema):
                 )
             self.create_substrates = False
 
-
+## Processes applied to the substrate
 class CleaningStep(ProcessStep):
     m_def = Section()
     cleaning_agent = Quantity(
@@ -292,104 +274,54 @@ class CleaningStep(ProcessStep):
         unit='s',
     )
 
-# class ForematicsSubstrateCleaning(Process, Schema):
-#     """
-#     Schema for substrate cleaning at the Forematics lab.
-#     """
+class ForOPVSubstrateCleaning(Process, Schema):
+    """
+    Schema for substrate cleaning at the Forematics lab for OPV samples.
+    """
+    m_def = Section(
+        categories=[ForematicsCategory],
+        label='OPV Substrate Cleaning',
+    )
+    supplyer = Quantity(
+        type=str,
+        default ='Ossila',
+        a_eln={'component': 'StringEditQuantity'}
+    )
+    substrate_batch = Quantity(
+        type=ForOPVSubstrateBatch,
+        description='The substrate batch that was cleaned',
+        a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
+    )
+    procedure = Quantity(
+        type=MEnum(['Standard', 'Custom']),
+        default ='Standard',
+        a_eln={'component': 'RadioEnumEditQuantity'}
+    )
+    steps = SubSection(
+        section_def=CleaningStep,
+        repeats=True
+    )
+    def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
+        """
+        The normalizer for the `ForOPVSubstrateCleaning` class.
 
-#     m_def = Section(
-#         categories=[ForematicsCategory],
-#         label='Substrate Cleaning',
-#     )
-#     substrate_batch = Quantity(
-#         type=DTUSubstrateBatch,
-#         description='The substrate batch that was cleaned.',
-#         a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
-#     )
-#     steps = SubSection(
-#         section_def=CleaningStep,
-#         repeats=True,
-#     )
+        Args:
+            archive (EntryArchive): The archive containing the section that is being
+            normalized.
+            logger (BoundLogger): A structlog logger.
+        """
+        super().normalize(archive, logger)
+        # self.samples = self.substrate_batch.entities
+        if self.procedure == 'Standard':
+            protocol = [['Acetone', 60*5], ['Helmanex',60*5], ['IPA',60*5], ['NaOH',60*10]]
 
-#     def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
-#         """
-#         The normalizer for the `DTUSubstrateCleaning` class.
-
-#         Args:
-#             archive (EntryArchive): The archive containing the section that is being
-#             normalized.
-#             logger (BoundLogger): A structlog logger.
-#         """
-#         self.samples = self.substrate_batch.entities
-#         return super().normalize(archive, logger)
-
-
-# class DTUSubstrateCutting(Process, Schema):
-#     """
-#     Schema for substrate cutting at the DTU Nanolab.
-#     """
-
-#     m_def = Section(
-#         categories=[DTUNanolabCategory],
-#         label='Substrate Cutting',
-#     )
-#     substrate_batch = Quantity(
-#         type=DTUSubstrateBatch,
-#         description='The substrate batch that was cut.',
-#         a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
-#     )
-#     instrument_name = Quantity(
-#         type=str,
-#         default='microSTRUCT vario from the company 3D-Micromac AG',
-#         a_eln=ELNAnnotation(component=ELNComponentEnum.StringEditQuantity),
-#     )
-#     laser_power = Quantity(
-#         type=np.float64,
-#         default=50,
-#         a_eln=ELNAnnotation(component=ELNComponentEnum.NumberEditQuantity),
-#         unit='W',
-#     )
-#     laser_wavelength = Quantity(
-#         type=np.float64,
-#         default=532 * 1e-9,
-#         a_eln=ELNAnnotation(
-#             component=ELNComponentEnum.NumberEditQuantity,
-#             defaultDisplayUnit='nm',
-#         ),
-#         unit='m',
-#     )
-#     repetition_rate = Quantity(
-#         type=np.float64,
-#         default=200,
-#         a_eln=ELNAnnotation(component=ELNComponentEnum.NumberEditQuantity),
-#         unit='Hz',
-#     )
-#     pattern_repetitions = Quantity(
-#         type=int,
-#         default=6,
-#         a_eln=ELNAnnotation(component=ELNComponentEnum.NumberEditQuantity),
-#     )
-#     writing_speed = Quantity(
-#         type=np.float64,
-#         default=50 * 1e-3,
-#         a_eln=ELNAnnotation(
-#             component=ELNComponentEnum.NumberEditQuantity,
-#             defaultDisplayUnit='mm/s',
-#         ),
-#         unit='m/s',
-#     )
-
-#     def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
-#         """
-#         The normalizer for the `DTUSubstrateCutting` class.
-
-#         Args:
-#             archive (EntryArchive): The archive containing the section that is being
-#             normalized.
-#             logger (BoundLogger): A structlog logger.
-#         """
-#         self.samples = self.substrate_batch.entities
-#         return super().normalize(archive, logger)
+            for agent, time in protocol:
+                cstep = CleaningStep()
+                cstep.sonication = True
+                cstep.cleaning_agent = agent
+                cstep.cleaning_time = time
+                self.steps.append(cstep)
+        return super().normalize(archive, logger)
 
 
 m_package.__init_metainfo__()
