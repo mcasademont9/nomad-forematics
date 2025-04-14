@@ -1,96 +1,67 @@
-0.5
-0.5
 {
   "data": {
     "m_def": "nomad_forematics.schema_packages.solution.ForOPVSolution",
-    "total_volume": 50.0,
-    "solute_concentration": 15.0,
-    "calculate_solution": true,
+    "total_volume": 0.0006,
+    "solute_concentration": 20.0,
+    "calculate_solution": false,
+    "calculated_solution": "Solvent: CB -> 0.6 ml\nDonor: PM6 -> 2 mg\nAcceptor: Y6 -> 2 mg\nAcceptor: COTIC-4F -> 8 mg\nNo additives components defined",
     "solvents": [
       {
-        "name": "PTQ10",
-        "datetime": "2025-04-11T17:24:21.931180+00:00",
-        "solvent_ratio": 0.5
-      },
-      {
-        "name": "PTB7-Th",
-        "datetime": "2025-04-11T17:24:21.931435+00:00",
-        "solvent_ratio": 0.5
+        "name": "CB",
+        "datetime": "2025-04-14T13:53:01.555516+00:00",
+        "ratio": 1.0
       }
     ],
     "donors": [
       {
         "name": "PM6",
-        "datetime": "2025-04-11T17:24:21.931554+00:00",
-        "organic_semiconductor_ratio": 0.5
-      },
-      {
-        "name": "PM6",
-        "datetime": "2025-04-11T17:24:21.931667+00:00",
-        "organic_semiconductor_ratio": 0.5
+        "datetime": "2025-04-14T13:53:01.555722+00:00",
+        "ratio": 1.0
       }
     ],
     "acceptors": [
       {
         "name": "Y6",
-        "datetime": "2025-04-11T17:24:21.931774+00:00",
-        "organic_semiconductor_ratio": 2.0
+        "datetime": "2025-04-14T13:53:01.555794+00:00",
+        "ratio": 1.0
       },
       {
         "name": "COTIC-4F",
-        "datetime": "2025-04-11T17:24:21.931881+00:00",
-        "organic_semiconductor_ratio": 0.5
-      }
-    ],
-    "additives": [
-      {
-        "name": "DIO",
-        "datetime": "2025-04-11T17:24:21.931991+00:00",
-        "solid_concentration": 0.2
-      },
-      {
-        "name": "CN",
-        "datetime": "2025-04-11T17:24:21.932105+00:00",
-        "liquid_concentration": 0.1
+        "datetime": "2025-04-14T13:53:01.555863+00:00",
+        "ratio": 4.0
       }
     ]
   },
   "metadata": {
     "entry_name": "substrate.archive.yaml",
     "entry_type": "ForOPVSolution",
-    "mainfile": "/home/lab/Documentos/nomad-forematics/tests/schema_packages/substrate.archive.yaml",
+    "mainfile": "/mnt/c/Users/vital/OneDrive/Documentos/GitHub/nomad-forematics/tests/schema_packages/substrate.archive.yaml",
     "text_search_contents": [
       "Y6",
-      "CN",
-      "PTB7-Th",
-      "DIO",
-      "COTIC-4F",
+      "CB",
       "PM6",
-      "PTQ10"
+      "COTIC-4F",
+      "Solvent: CB -> 0.6 ml\nDonor: PM6 -> 2 mg\nAcceptor: Y6 -> 2 mg\nAcceptor: COTIC-4F -> 8 mg\nNo additives components defined"
     ],
-    "n_quantities": 45,
+    "n_quantities": 30,
     "quantities": [
       "",
       "data",
       "data.acceptors",
       "data.acceptors.datetime",
       "data.acceptors.name",
-      "data.acceptors.organic_semiconductor_ratio",
-      "data.additives",
-      "data.additives.datetime",
-      "data.additives.liquid_concentration",
-      "data.additives.name",
-      "data.additives.solid_concentration",
+      "data.acceptors.ratio",
       "data.calculate_solution",
+      "data.calculated_solution",
       "data.donors",
       "data.donors.datetime",
       "data.donors.name",
-      "data.donors.organic_semiconductor_ratio",
+      "data.donors.ratio",
       "data.solute_concentration",
       "data.solvents",
       "data.solvents.datetime",
       "data.solvents.name",
-      "data.solvents.solvent_ratio",
+      "data.solvents.ratio",
       "data.total_volume",
       "metadata",
       "metadata.entry_name",
@@ -114,7 +85,6 @@
       "nomad.datamodel.results.ELN",
       "nomad.datamodel.results.Properties",
       "nomad.datamodel.results.Results",
-      "nomad_forematics.schema_packages.solution.AdditiveComponent",
       "nomad_forematics.schema_packages.solution.ForOPVSolution",
       "nomad_forematics.schema_packages.solution.OrgSCComponent",
       "nomad_forematics.schema_packages.solution.SolventComponent"
@@ -166,23 +136,18 @@
         "used_directly": true
       },
       {
-        "definition_qualified_name": "nomad_forematics.schema_packages.solution.AdditiveComponent",
-        "definition_id": "3286768c974c3d30b6d263860ea3b652d3d57d53",
-        "used_directly": true
-      },
-      {
         "definition_qualified_name": "nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition_id": "d6ac4b7ce5401ed6ab259ffb954afef027754197",
+        "definition_id": "4832393f7d4b5710940f8e77c6da1e4d9d140eb6",
         "used_directly": true
       },
       {
         "definition_qualified_name": "nomad_forematics.schema_packages.solution.OrgSCComponent",
-        "definition_id": "174f383ce72310998638b1ac94c1772a4a530429",
+        "definition_id": "20d5059728f459e82272794ced316a3964745e30",
         "used_directly": true
       },
       {
         "definition_qualified_name": "nomad_forematics.schema_packages.solution.SolventComponent",
-        "definition_id": "e332c47123f6185f15c6267e8380babc4755c2db",
+        "definition_id": "a18c772e5535cc6218203188ff74967a190d54ac",
         "used_directly": true
       }
     ],
@@ -191,55 +156,37 @@
         "id": "data.calculate_solution#nomad_forematics.schema_packages.solution.ForOPVSolution",
         "definition": "nomad_forematics.schema_packages.solution.ForOPVSolution.calculate_solution",
         "path_archive": "data.calculate_solution",
-        "bool_value": true
+        "bool_value": false
       },
       {
         "id": "data.total_volume#nomad_forematics.schema_packages.solution.ForOPVSolution",
         "definition": "nomad_forematics.schema_packages.solution.ForOPVSolution.total_volume",
         "path_archive": "data.total_volume",
-        "float_value": 50.0
+        "float_value": 0.0006
       },
       {
         "id": "data.solute_concentration#nomad_forematics.schema_packages.solution.ForOPVSolution",
         "definition": "nomad_forematics.schema_packages.solution.ForOPVSolution.solute_concentration",
         "path_archive": "data.solute_concentration",
-        "float_value": 15.0
+        "float_value": 20.0
       },
       {
         "id": "data.solvents.name#nomad_forematics.schema_packages.solution.ForOPVSolution",
         "definition": "nomad_forematics.schema_packages.solution.SolventComponent.name",
         "path_archive": "data.solvents.0.name",
-        "str_value": "PTQ10"
+        "str_value": "CB"
       },
       {
-        "id": "data.solvents.solvent_ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.SolventComponent.solvent_ratio",
-        "path_archive": "data.solvents.0.solvent_ratio",
-        "float_value": 0.5
+        "id": "data.solvents.ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
+        "definition": "nomad_forematics.schema_packages.solution.SolventComponent.ratio",
+        "path_archive": "data.solvents.0.ratio",
+        "float_value": 1.0
       },
       {
         "id": "data.solvents.datetime#nomad_forematics.schema_packages.solution.ForOPVSolution",
         "definition": "nomad.datamodel.metainfo.basesections.v1.BaseSection.datetime",
         "path_archive": "data.solvents.0.datetime",
-        "datetime_value": "2025-04-11T17:24:21.931180+00:00"
-      },
-      {
-        "id": "data.solvents.name#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.SolventComponent.name",
-        "path_archive": "data.solvents.1.name",
-        "str_value": "PTB7-Th"
-      },
-      {
-        "id": "data.solvents.solvent_ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.SolventComponent.solvent_ratio",
-        "path_archive": "data.solvents.1.solvent_ratio",
-        "float_value": 0.5
-      },
-      {
-        "id": "data.solvents.datetime#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad.datamodel.metainfo.basesections.v1.BaseSection.datetime",
-        "path_archive": "data.solvents.1.datetime",
-        "datetime_value": "2025-04-11T17:24:21.931435+00:00"
+        "datetime_value": "2025-04-14T13:53:01.555516+00:00"
       },
       {
         "id": "data.donors.name#nomad_forematics.schema_packages.solution.ForOPVSolution",
@@ -248,34 +195,16 @@
         "str_value": "PM6"
       },
       {
-        "id": "data.donors.organic_semiconductor_ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.OrgSCComponent.organic_semiconductor_ratio",
-        "path_archive": "data.donors.0.organic_semiconductor_ratio",
-        "float_value": 0.5
+        "id": "data.donors.ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
+        "definition": "nomad_forematics.schema_packages.solution.OrgSCComponent.ratio",
+        "path_archive": "data.donors.0.ratio",
+        "float_value": 1.0
       },
       {
         "id": "data.donors.datetime#nomad_forematics.schema_packages.solution.ForOPVSolution",
         "definition": "nomad.datamodel.metainfo.basesections.v1.BaseSection.datetime",
         "path_archive": "data.donors.0.datetime",
-        "datetime_value": "2025-04-11T17:24:21.931554+00:00"
-      },
-      {
-        "id": "data.donors.name#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.OrgSCComponent.name",
-        "path_archive": "data.donors.1.name",
-        "str_value": "PM6"
-      },
-      {
-        "id": "data.donors.organic_semiconductor_ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.OrgSCComponent.organic_semiconductor_ratio",
-        "path_archive": "data.donors.1.organic_semiconductor_ratio",
-        "float_value": 0.5
-      },
-      {
-        "id": "data.donors.datetime#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad.datamodel.metainfo.basesections.v1.BaseSection.datetime",
-        "path_archive": "data.donors.1.datetime",
-        "datetime_value": "2025-04-11T17:24:21.931667+00:00"
+        "datetime_value": "2025-04-14T13:53:01.555722+00:00"
       },
       {
         "id": "data.acceptors.name#nomad_forematics.schema_packages.solution.ForOPVSolution",
@@ -284,16 +213,16 @@
         "str_value": "Y6"
       },
       {
-        "id": "data.acceptors.organic_semiconductor_ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.OrgSCComponent.organic_semiconductor_ratio",
-        "path_archive": "data.acceptors.0.organic_semiconductor_ratio",
-        "float_value": 2.0
+        "id": "data.acceptors.ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
+        "definition": "nomad_forematics.schema_packages.solution.OrgSCComponent.ratio",
+        "path_archive": "data.acceptors.0.ratio",
+        "float_value": 1.0
       },
       {
         "id": "data.acceptors.datetime#nomad_forematics.schema_packages.solution.ForOPVSolution",
         "definition": "nomad.datamodel.metainfo.basesections.v1.BaseSection.datetime",
         "path_archive": "data.acceptors.0.datetime",
-        "datetime_value": "2025-04-11T17:24:21.931774+00:00"
+        "datetime_value": "2025-04-14T13:53:01.555794+00:00"
       },
       {
         "id": "data.acceptors.name#nomad_forematics.schema_packages.solution.ForOPVSolution",
@@ -302,52 +231,22 @@
         "str_value": "COTIC-4F"
       },
       {
-        "id": "data.acceptors.organic_semiconductor_ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.OrgSCComponent.organic_semiconductor_ratio",
-        "path_archive": "data.acceptors.1.organic_semiconductor_ratio",
-        "float_value": 0.5
+        "id": "data.acceptors.ratio#nomad_forematics.schema_packages.solution.ForOPVSolution",
+        "definition": "nomad_forematics.schema_packages.solution.OrgSCComponent.ratio",
+        "path_archive": "data.acceptors.1.ratio",
+        "float_value": 4.0
       },
       {
         "id": "data.acceptors.datetime#nomad_forematics.schema_packages.solution.ForOPVSolution",
         "definition": "nomad.datamodel.metainfo.basesections.v1.BaseSection.datetime",
         "path_archive": "data.acceptors.1.datetime",
-        "datetime_value": "2025-04-11T17:24:21.931881+00:00"
+        "datetime_value": "2025-04-14T13:53:01.555863+00:00"
       },
       {
-        "id": "data.additives.name#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.AdditiveComponent.name",
-        "path_archive": "data.additives.0.name",
-        "str_value": "DIO"
-      },
-      {
-        "id": "data.additives.solid_concentration#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.AdditiveComponent.solid_concentration",
-        "path_archive": "data.additives.0.solid_concentration",
-        "float_value": 0.2
-      },
-      {
-        "id": "data.additives.datetime#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad.datamodel.metainfo.basesections.v1.BaseSection.datetime",
-        "path_archive": "data.additives.0.datetime",
-        "datetime_value": "2025-04-11T17:24:21.931991+00:00"
-      },
-      {
-        "id": "data.additives.name#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.AdditiveComponent.name",
-        "path_archive": "data.additives.1.name",
-        "str_value": "CN"
-      },
-      {
-        "id": "data.additives.liquid_concentration#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad_forematics.schema_packages.solution.AdditiveComponent.liquid_concentration",
-        "path_archive": "data.additives.1.liquid_concentration",
-        "float_value": 0.1
-      },
-      {
-        "id": "data.additives.datetime#nomad_forematics.schema_packages.solution.ForOPVSolution",
-        "definition": "nomad.datamodel.metainfo.basesections.v1.BaseSection.datetime",
-        "path_archive": "data.additives.1.datetime",
-        "datetime_value": "2025-04-11T17:24:21.932105+00:00"
+        "id": "data.calculated_solution#nomad_forematics.schema_packages.solution.ForOPVSolution",
+        "definition": "nomad_forematics.schema_packages.solution.ForOPVSolution.calculated_solution",
+        "path_archive": "data.calculated_solution",
+        "str_value": "Solvent: CB -> 0.6 ml\nDonor: PM6 -> 2 mg\nAcceptor: Y6 -> 2 mg\nAcceptor: COTIC-4F -> 8 mg\nNo additives components defined"
       }
     ]
   },
@@ -356,23 +255,15 @@
     "eln": {
       "sections": [
         "SolventComponent",
-        "SolventComponent",
         "OrgSCComponent",
         "OrgSCComponent",
-        "OrgSCComponent",
-        "OrgSCComponent",
-        "AdditiveComponent",
-        "AdditiveComponent"
+        "OrgSCComponent"
       ],
       "names": [
-        "PTQ10",
-        "PTB7-Th",
-        "PM6",
+        "CB",
         "PM6",
         "Y6",
-        "COTIC-4F",
-        "DIO",
-        "CN"
+        "COTIC-4F"
       ]
     }
   }

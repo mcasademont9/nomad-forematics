@@ -52,9 +52,9 @@ class SolventComponent(Entity):
     # Sill needs to be defined properly
     m_def = Section(
         categories=[ForematicsCategory],
-        label='Forematics Solvent Component',
+        label='Forematics Solvent Component of a solution',
     )
-    solvent_ratio = Quantity(
+    ratio = Quantity(
         type=np.float64,
         default=1,
         a_eln={'component': 'NumberEditQuantity'}
@@ -68,7 +68,7 @@ class SolventComponent(Entity):
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'g / ml'},
         unit='g / ml',
     )
-    material_reference = Quantity(
+    material_reference = Quantity( # I hve to check that this works properly, and add normalizers that defines a name when this is updated
         type=PureSubstance,
         description='The pure substance of this solvent',
         a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
@@ -78,9 +78,9 @@ class OrgSCComponent(Entity):
     # Sill needs to be defined properly
     m_def = Section(
         categories=[ForematicsCategory],
-        label='Forematics Solvent Component',
+        label='Forematics Solvent Component of a solution',
     )
-    organic_semiconductor_ratio = Quantity(
+    ratio = Quantity(
         type=np.float64,
         default=1,
         a_eln={'component': 'NumberEditQuantity'}
@@ -89,12 +89,12 @@ class OrgSCComponent(Entity):
         type=str,
         a_eln={'component': 'StringEditQuantity'},
     )
-    density = Quantity(
-        type=np.float64,
-        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'g / ml'},
-        unit='g / ml',
-    )
-    material_reference = Quantity(
+    # density = Quantity(
+    #     type=np.float64,
+    #     a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'g / ml'},
+    #     unit='g / ml',
+    # )
+    material_reference = Quantity( # I hve to check that this works properly, and add normalizers that defines a name when this is updated
         type=PureSubstance,
         description='The pure substance of this solvent',
         a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
@@ -104,28 +104,17 @@ class AdditiveComponent(Entity):
     # Sill needs to be defined properly
     m_def = Section(
         categories=[ForematicsCategory],
-        label='Forematics Solvent Component',
+        label='Forematics Solvent Component of a solution',
     )
-    # ratio = Quantity(
-    #     type=np.float64,
-    #     default=1,
-    #     a_eln={'component': 'NumberEditQuantity'}
-    # )
     name = Quantity(
         type=str,
         a_eln={'component': 'StringEditQuantity'},
     )
-    solid_concentration = Quantity(
+    liquid_percent = Quantity(
         type=np.float64,
-        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'g / ml'},
-        unit='g / ml',
+        a_eln={'component': 'NumberEditQuantity'}
     )
-    liquid_concentration = Quantity(
-        type=np.float64,
-        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'ml / ml'},
-        unit='ml / ml',
-    )
-    material_reference = Quantity(
+    material_reference = Quantity( # I hve to check that this works properly, and add normalizers that defines a name when this is updated
         type=PureSubstance,
         description='The pure substance of this solvent',
         a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
@@ -174,15 +163,15 @@ class ForOPVSolution(Schema):
     )
     total_volume = Quantity(
         type=np.float64,
-        default=1,
+        default=0.0006,
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'ml'},
-        unit = 'ml'
+        unit = 'l'
     )
     solute_concentration = Quantity(
         type=np.float64,
         default = 15,
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'mg / ml'},
-        unit='mg / ml'
+        unit='g / l'
     )
 
     calculate_solution = Quantity(
@@ -191,10 +180,15 @@ class ForOPVSolution(Schema):
         a_eln = ELNAnnotation(component=ELNComponentEnum.BoolEditQuantity),
     )
 
+    calculated_solution = Quantity(
+        type=str,
+        default= 'Check "Calculate solution" box to calculate volume and weigths of different components.',
+        a_eln={'component': 'RichTextEditQuantity'},
+    )
 
     def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
         """
-        The normalizer for the `ForematicsSubstrate` class.
+        The normalizer for the `ForOPVSolution` class.
 
         Args:
             archive (EntryArchive): The archive containing the section that is being
@@ -203,9 +197,50 @@ class ForOPVSolution(Schema):
         """
         super().normalize(archive, logger)
         if self.calculate_solution:
-            for solvent in self.solvents:
-                print(solvent.solvent_ratio)
+            total_solvent_ratio = 0
+            print_string = []
+            if not self.solvents:
+                print_string.append('No solvent components defined')
+            else:
+                for solvent in self.solvents:
+                    total_solvent_ratio += solvent.ratio # we calculate the total solvent ratio
+                for solvent in self.solvents:
+                    solvent_volume = self.total_volume * solvent.ratio / total_solvent_ratio
+                    solvent_string = f"Solvent: {solvent.name} -> {solvent_volume.to('ml').magnitude:.6g} ml"
+                    print_string.append(solvent_string)
 
+            total_osc_ratio = 0
+            if not self.donors:
+                print_string.append('No donor components defined')
+            else:
+                for donor in self.donors:
+                    total_osc_ratio += donor.ratio
+            if not self.acceptors:
+                print_string.append('No acceptor components defined')
+            else:
+                for acceptor in self.acceptors:
+                    total_osc_ratio += acceptor.ratio
 
+            total_osc_mg = self.solute_concentration.to('mg/ml') * self.total_volume.to('ml')
+
+            for osc in self.donors:
+                osc_mg = total_osc_mg*osc.ratio/total_osc_ratio
+                osc_string = f"Donor: {osc.name} -> {osc_mg.to('mg').magnitude:.6g} mg"
+                print_string.append(osc_string)
+            for osc in self.acceptors:
+                osc_mg = total_osc_mg*osc.ratio/total_osc_ratio
+                osc_string = f"Acceptor: {osc.name} -> {osc_mg.to('mg').magnitude:.6g} mg"
+                print_string.append(osc_string)
+
+            if not self.additives:
+                print_string.append('No additives components defined')
+            else:
+                for additive in self.additives:
+                    additive_volume = additive.liquid_percent/100 * self.total_volume.to('microlitre')
+                    additive_string = f"Additive: {additive.name} -> {additive_volume.to('microlitre').magnitude:.6g} ul"
+                    print_string.append(additive_string)
+
+            self.calculated_solution = '\n'.join(print_string) # print the calculated parameters
+            self.calculate_solution = False # and get back to false the calculate "button"
 
 m_package.__init_metainfo__()

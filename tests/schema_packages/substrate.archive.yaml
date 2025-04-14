@@ -8,36 +8,36 @@ data:
   m_def: nomad_forematics.schema_packages.solution.ForOPVSolution
   name: SolutionTest
   calculate_solution: True
-  total_volume: 50
-  solute_concentration: 15
+  total_volume: 0.0006
+  solute_concentration: 20
   solvents:
     - m_def: nomad_forematics.schema_packages.solution.SolventComponent
-      name: PTQ10
-      solvent_ratio: 0.5
-    - m_def: nomad_forematics.schema_packages.solution.SolventComponent
-      name: PTB7-Th
-      solvent_ratio: 0.5
+      name: CB
+      ratio: 1
+  #   - m_def: nomad_forematics.schema_packages.solution.SolventComponent
+  #     name: CF
+  #     ratio: 1
   donors:
     - m_def: nomad_forematics.schema_packages.solution.OrgSCComponent
       name: PM6
-      organic_semiconductor_ratio: 0.5
-    - m_def: nomad_forematics.schema_packages.solution.OrgSCComponent
-      name: PM6
-      organic_semiconductor_ratio: 0.5
+      ratio: 1
+    # - m_def: nomad_forematics.schema_packages.solution.OrgSCComponent
+    #   name: PTQ10
+    #   ratio: 0.5
   acceptors:
     - m_def: nomad_forematics.schema_packages.solution.OrgSCComponent
       name: Y6
-      organic_semiconductor_ratio: 2
+      ratio: 1
     - m_def: nomad_forematics.schema_packages.solution.OrgSCComponent
       name: COTIC-4F
-      organic_semiconductor_ratio: 0.5
-  additives:
-    - m_def: nomad_forematics.schema_packages.solution.AdditiveComponent
-      name: DIO
-      solid_concentration: 0.2
-    - m_def: nomad_forematics.schema_packages.solution.AdditiveComponent
-      name: CN
-      liquid_concentration: 0.1
+      ratio: 4
+  # additives:
+  #   - m_def: nomad_forematics.schema_packages.solution.AdditiveComponent
+  #     name: DIO
+  #     liquid_percent: 0.2
+  #   - m_def: nomad_forematics.schema_packages.solution.AdditiveComponent
+  #     name: CN
+  #     liquid_percent: 0.1
 
 
 
