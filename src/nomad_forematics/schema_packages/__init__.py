@@ -22,3 +22,25 @@ solution = SolutionEntryPoint(
     name='Solution',
     description='Schema package defined for solutions.',
 )
+
+class ExperimentEntryPoint(SchemaPackageEntryPoint):
+    def load(self):
+        from nomad_forematics.schema_packages.experiment import m_package
+
+        return m_package
+
+experiment = ExperimentEntryPoint(
+    name='Experiment',
+    description='Schema package defined for OPV experiments.',
+)
+
+class ProcessingEntryPoint(SchemaPackageEntryPoint):
+    def load(self):
+        from nomad_forematics.schema_packages.processing import m_package
+
+        return m_package
+
+processing = ProcessingEntryPoint(
+    name='Processing',
+    description='Schema package defined for OPV processing steps.',
+)

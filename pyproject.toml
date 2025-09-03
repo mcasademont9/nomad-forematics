@@ -15,7 +15,7 @@ classifiers = [
 ]
 name = "nomad-forematics"
 description = "NOMAD plugin for forematics experiments"
-version = "0.1.0"
+version = "0.1.3"
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
@@ -83,6 +83,7 @@ select = [
 
 ignore = [
     "F403", # 'from module import *' used; unable to detect undefined names
+    "E501", # To ignore "line too long" errors
 ]
 
 fixable = ["ALL"]
@@ -104,17 +105,29 @@ skip-magic-trailing-comma = false
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
 
+#[tool.setuptools]
+#packages = ["nomad_forematics"]
+#package-dir = { "" = "src" }
+#exclude = [".venv"]
+
+#[tool.setuptools.packages.find]
+#where = ["src"]
+
 [tool.setuptools]
 package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["nomad_forematics"]
+exclude = [".pyenv"]
 
 [project.entry-points.'nomad.plugin']
 parser_entry_point = "nomad_forematics.parsers:parser_entry_point"
 #schema_package_entry_point = "nomad_forematics.schema_packages:schema_package_entry_point"
 substrate = "nomad_forematics.schema_packages:substrate"
 solution = "nomad_forematics.schema_packages:solution"
+experiment = "nomad_forematics.schema_packages:experiment"
+processing = "nomad_forematics.schema_packages:processing"
 normalizer_entry_point = "nomad_forematics.normalizers:normalizer_entry_point"
 app_entry_point = "nomad_forematics.apps:app_entry_point"
 example_upload_entry_point = "nomad_forematics.example_uploads:example_upload_entry_point"

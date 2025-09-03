@@ -22,21 +22,16 @@ import numpy as np
 from nomad.datamodel.data import Schema
 from nomad.datamodel.metainfo.annotations import ELNAnnotation, ELNComponentEnum
 from nomad.datamodel.metainfo.basesections import (
-    Collection,
     Entity,
+    PureSubstance,
     CompositeSystemReference,
-    ProcessStep,
-    Process,
-    ReadableIdentifiers,
-    PureSubstance
 )
-from nomad.metainfo import MEnum, MProxy, Package, Quantity, Section, SubSection, MSection
-from nomad_material_processing.general import (
-    RectangleCuboid,
-    Substrate,
+from nomad.metainfo import (
+    Package,
+    Quantity,
+    Section,
+    SubSection,
 )
-from nomad_material_processing.solution.general import (Solution)
-from nomad_material_processing.utils import create_archive
 from structlog.stdlib import BoundLogger
 
 from nomad_forematics.categories import ForematicsCategory
@@ -197,50 +192,60 @@ class ForOPVSolution(Schema):
         """
         super().normalize(archive, logger)
         if self.calculate_solution:
-            total_solvent_ratio = 0
             print_string = []
-            if not self.solvents:
-                print_string.append('No solvent components defined')
-            else:
-                for solvent in self.solvents:
-                    total_solvent_ratio += solvent.ratio # we calculate the total solvent ratio
-                for solvent in self.solvents:
-                    solvent_volume = self.total_volume * solvent.ratio / total_solvent_ratio
-                    solvent_string = f"Solvent: {solvent.name} -> {solvent_volume.to('ml').magnitude:.6g} ml"
-                    print_string.append(solvent_string)
+            self._calculate_solvent_strings(print_string)
+            self._calculate_osc_strings(print_string)
+            self._calculate_additive_strings(print_string)
 
-            total_osc_ratio = 0
-            if not self.donors:
-                print_string.append('No donor components defined')
-            else:
-                for donor in self.donors:
-                    total_osc_ratio += donor.ratio
-            if not self.acceptors:
-                print_string.append('No acceptor components defined')
-            else:
-                for acceptor in self.acceptors:
-                    total_osc_ratio += acceptor.ratio
+            # Print the calculated parameters. The \n does not work for the kind of
+            # output data we have. Let's try to use <br /> as in HTML formatting
+            self.calculated_solution = '<br />'.join(print_string)
+            self.calculate_solution = False  # back to false
 
-            total_osc_mg = self.solute_concentration.to('mg/ml') * self.total_volume.to('ml')
+    def _calculate_solvent_strings(self, print_string):
+        if not self.solvents:
+            print_string.append('No solvent components defined')
+        else:
+            total_solvent_ratio = sum(solvent.ratio for solvent in self.solvents)
+            for solvent in self.solvents:
+                solvent_volume = self.total_volume * solvent.ratio / total_solvent_ratio
+                solvent_string = f"Solvent: {solvent.name} -> {solvent_volume.to('ml').magnitude:.6g} ml"
+                print_string.append(solvent_string)
 
-            for osc in self.donors:
-                osc_mg = total_osc_mg*osc.ratio/total_osc_ratio
-                osc_string = f"Donor: {osc.name} -> {osc_mg.to('mg').magnitude:.6g} mg"
-                print_string.append(osc_string)
-            for osc in self.acceptors:
-                osc_mg = total_osc_mg*osc.ratio/total_osc_ratio
-                osc_string = f"Acceptor: {osc.name} -> {osc_mg.to('mg').magnitude:.6g} mg"
+    def _calculate_osc_strings(self, print_string):
+        total_osc_ratio = sum(donor.ratio for donor in self.donors) + sum(acceptor.ratio for acceptor in self.acceptors)
+        total_osc_mg = self.solute_concentration.to('mg/ml') * self.total_volume.to('ml')
+
+        if not self.donors:
+            print_string.append('No donor components defined')
+        else:
+            for donor in self.donors:
+                osc_mg = total_osc_mg * donor.ratio / total_osc_ratio
+                osc_string = f"Donor: {donor.name} -> {osc_mg.to('mg').magnitude:.6g} mg"
                 print_string.append(osc_string)
 
-            if not self.additives:
-                print_string.append('No additives components defined')
-            else:
-                for additive in self.additives:
-                    additive_volume = additive.liquid_percent/100 * self.total_volume.to('microlitre')
-                    additive_string = f"Additive: {additive.name} -> {additive_volume.to('microlitre').magnitude:.6g} ul"
-                    print_string.append(additive_string)
+        if not self.acceptors:
+            print_string.append('No acceptor components defined')
+        else:
+            for acceptor in self.acceptors:
+                osc_mg = total_osc_mg * acceptor.ratio / total_osc_ratio
+                osc_string = f"Acceptor: {acceptor.name} -> {osc_mg.to('mg').magnitude:.6g} mg"
+                print_string.append(osc_string)
 
-            self.calculated_solution = '\n'.join(print_string) # print the calculated parameters
-            self.calculate_solution = False # and get back to false the calculate "button"
+    def _calculate_additive_strings(self, print_string):
+        if not self.additives:
+            print_string.append('No additives components defined')
+        else:
+            for additive in self.additives:
+                additive_volume = additive.liquid_percent / 100 * self.total_volume.to('microlitre')
+                additive_string = f"Additive: {additive.name} -> {additive_volume.to('microlitre').magnitude:.6g} ul"
+                print_string.append(additive_string)
+
+class ForOPVSolutionReference(CompositeSystemReference):
+    reference = Quantity(
+        type=ForOPVSolution,
+        description='The reference to a ForOPVSolution entity.',
+        a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
+    )
 
 m_package.__init_metainfo__()

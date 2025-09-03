@@ -24,13 +24,19 @@ from nomad.datamodel.metainfo.annotations import ELNAnnotation, ELNComponentEnum
 from nomad.datamodel.metainfo.basesections import (
     Collection,
     CompositeSystemReference,
-    ProcessStep,
     Process,
+    ProcessStep,
     ReadableIdentifiers,
 )
-from nomad.metainfo import MEnum, MProxy, Package, Quantity, Section, SubSection, MSection
+from nomad.metainfo import (
+    MEnum,
+    MProxy,
+    Package,
+    Quantity,
+    Section,
+    SubSection,
+)
 from nomad_material_processing.general import (
-    RectangleCuboid,
     Substrate,
 )
 from nomad_material_processing.utils import create_archive
@@ -47,7 +53,7 @@ m_package = Package(name='Forematics customised Substrate schema')
 
 class ForOPVSubstrate(Substrate, Schema):
     """
-    Schema for one sollar cell substrate in the Forematics lab.
+    Schema for one solar cell substrate in the Forematics lab.
     """
 
     m_def = Section(
@@ -69,23 +75,20 @@ class ForOPVSubstrate(Substrate, Schema):
 
     size = Quantity(
         type = MEnum(['Scale-up', 'Spin-coating']),
-        default = 'Spin-coating',
+        default = 'Scale-up',
         a_eln={'component': 'RadioEnumEditQuantity'},
     )
-
     supplyer = Quantity(
         type=str,
         default ='Ossila',
         a_eln={'component': 'StringEditQuantity'}
     )
-
     length = Quantity(
         type=np.float64,
         default=0.075,
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'mm'},
         unit='m',
     )
-
     width = Quantity(
         type=np.float64,
         default=0.025,
@@ -98,6 +101,12 @@ class ForOPVSubstrate(Substrate, Schema):
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'mm'},
         unit='m',
     )
+
+    # opv_processing_steps_applied = BackReference(
+    #     reference='ForOPVSubstrateReference.reference',
+    #     description='Indirect references from reference wrapper sections',
+    #     multiple=True
+    # )
 
     def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
         """
@@ -112,13 +121,13 @@ class ForOPVSubstrate(Substrate, Schema):
 
         # Define the sizes of the possible pre-defined substrates
         if self.size == 'Scale-up':
-            self.width = 0.025
-            self.length = 0.075
-            self.depth = 0.0011
+            self.width = 7#0.025
+            self.length = 7#0.075
+            self.depth = 7#0.0011
         elif self.size == 'Spin-coating':
-            self.width = 0.010
-            self.length = 0.020
-            self.depth = 0.0011
+            self.width = 3#0.010
+            self.length = 3#0.020
+            self.depth = 3#0.0011
 
 class ForOPVSubstrateReference(CompositeSystemReference):
     reference = Quantity(
@@ -244,7 +253,9 @@ class ForOPVSubstrateBatch(Collection, Schema):
                 file_name = f'{substrate.name}.archive.json'
                 substrate_archive = create_archive(substrate, archive, file_name)
 
-                self.entities.append( # Check if that is correct aftwerwards with the implementation in oasis environment
+                # Check if that is correct aftwerwards with
+                # the implementation in oasis environment
+                self.entities.append(
                     # CompositeSystemReference(
                     ForOPVSubstrateReference(
                         reference=substrate_archive,
@@ -254,11 +265,18 @@ class ForOPVSubstrateBatch(Collection, Schema):
                 )
             self.create_substrates = False
 
+class ForOPVSubstrateBatchReference(CompositeSystemReference):
+    reference = Quantity(
+        type=ForOPVSubstrateBatch,
+        description='The reference to a ForOPVSubstrateBatch entity.',
+        a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
+    )
+
 ## Processes applied to the substrate
 class CleaningStep(ProcessStep):
     m_def = Section()
     cleaning_agent = Quantity(
-        type=MEnum(['Acetone', 'Helmanex','IPA', 'NaOH', 'UV-Ozone']),
+        type=MEnum(['Acetone', 'Hellmanex', 'IPA', 'NaOH', 'UV-Ozone']),
         default='Acetone',
         a_eln=ELNAnnotation(component=ELNComponentEnum.RadioEnumEditQuantity),
     )
@@ -270,8 +288,8 @@ class CleaningStep(ProcessStep):
     cleaning_time = Quantity(
         type=np.float64,
         default=60,
-        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'minutes'},
-        unit='s',
+        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'minute'},
+        unit='second',
     )
 
 class ForOPVSubstrateCleaning(Process, Schema):
@@ -313,7 +331,11 @@ class ForOPVSubstrateCleaning(Process, Schema):
         super().normalize(archive, logger)
         # self.samples = self.substrate_batch.entities
         if self.procedure == 'Standard':
-            protocol = [['Acetone', 60*5], ['Helmanex',60*5], ['IPA',60*5], ['NaOH',60*10]]
+            self.steps = [] # reset the steps to avoid overwritting
+            protocol = [['Acetone', 60*5],
+                        ['Hellmanex',60*5],
+                        ['IPA',60*5],
+                        ['NaOH',60*10]]
 
             for agent, time in protocol:
                 cstep = CleaningStep()
@@ -323,5 +345,11 @@ class ForOPVSubstrateCleaning(Process, Schema):
                 self.steps.append(cstep)
         return super().normalize(archive, logger)
 
+class ForOPVSubstrateCleaningReference(CompositeSystemReference):
+    reference = Quantity(
+        type=ForOPVSubstrateCleaning,
+        description='The reference to a ForOPVSubstrateCleaning entity.',
+        a_eln=ELNAnnotation(component=ELNComponentEnum.ReferenceEditQuantity),
+    )
 
 m_package.__init_metainfo__()
